@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>カメラ切り替え</title>
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background-color: black;
+        position: relative;
+      }
+
+      #cameraContainer {
+        width: 100%;
+        height: 100%;
+      }
+
+      #cameraView {
+        width: 100%;
+        height: 100%;
+        background-color: black;
+      }
+
+      #toggleButton {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: white;
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="cameraContainer">
+      <video id="cameraView" autoplay playsinline></video>
+      <button id="toggleButton">令和さくら高等学院-大学習室</button>
+    </div>
+
+    <script>
+      var cameras = ['environment', 'user'];
+      var currentCameraIndex = 0;
+      function switchCamera() {
+        currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
+        var selectedCamera = cameras[currentCameraIndex];
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: selectedCamera }, audio: true })
+          .then(function (stream) {
+            var cameraView = document.getElementById("cameraView");
+            cameraView.srcObject = stream;
+          })
+          .catch(function (error) {
+            console.error("カメラおよびマイクアクセスエラー: " + error);
+          });
+      }
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: cameras[currentCameraIndex] }, audio: true })
+        .then(function (stream) {
+          var cameraView = document.getElementById("cameraView");
+          cameraView.srcObject = stream;
+        })
+        .catch(function (error) {
+          console.error("カメラおよびマイクアクセスエラー: " + error);
+        });
+      var toggleButton = document.getElementById("toggleButton");
+      toggleButton.addEventListener("click", switchCamera);
+    </script>
+  </body>
+</html>
