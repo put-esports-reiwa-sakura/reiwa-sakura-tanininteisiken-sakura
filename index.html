@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>カメラと音声切り替え</title>
+    <title>令和さくら高等学院-単位認定試験時カメラ</title>
     <style>
       body, html {
         margin: 0;
@@ -47,11 +47,19 @@
     <audio id="microphoneView" autoplay></audio>
     <button id="toggleButton"></button>
     <div id="cameraLabel">令和さくら高等学院-大学習室</div>
+
     <script>
       var currentCamera = 0;
       var cameras = ["environment", "user", "environment"];
+      var audioOutputId;
+
       function switchCamera() {
         currentCamera = (currentCamera + 1) % cameras.length;
+        if (currentCamera === 0) {
+          audioOutputId = null;
+        } else {
+          audioOutputId = "yourHDMIOutputDeviceID";
+        }
         navigator.mediaDevices.getUserMedia({ 
           video: { 
             facingMode: cameras[currentCamera],
@@ -59,7 +67,9 @@
             height: { ideal: 1080 },
             frameRate: { ideal: 60 }
           }, 
-          audio: true 
+          audio: {
+            deviceId: { exact: audioOutputId }
+          }
         })
           .then(function (stream) {
             var cameraView = document.getElementById("cameraView");
@@ -76,7 +86,9 @@
           height: { ideal: 1080 },
           frameRate: { ideal: 60 }
         }, 
-        audio: true 
+        audio: {
+          deviceId: { exact: audioOutputId }
+        }
       })
         .then(function (stream) {
           var cameraView = document.getElementById("cameraView");
