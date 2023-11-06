@@ -16,9 +16,6 @@
         background-color: black;
         position: relative;
       }
-      #microphoneView {
-        display: none;
-      }
       #toggleButton {
         position: absolute;
         top: 0;
@@ -44,31 +41,19 @@
   </head>
   <body>
     <video id="cameraView" autoplay playsinline></video>
-    <audio id="microphoneView" autoplay></audio>
     <button id="toggleButton"></button>
     <div id="cameraLabel">令和さくら高等学院-大学習室</div>
-
     <script>
       var currentCamera = 0;
       var cameras = ["environment", "user", "environment"];
-      var audioOutputId;
-
       function switchCamera() {
         currentCamera = (currentCamera + 1) % cameras.length;
-        if (currentCamera === 0) {
-          audioOutputId = null;
-        } else {
-          audioOutputId = "yourHDMIOutputDeviceID";
-        }
         navigator.mediaDevices.getUserMedia({ 
           video: { 
             facingMode: cameras[currentCamera],
             width: { ideal: 1920 },
             height: { ideal: 1080 },
             frameRate: { ideal: 60 }
-          }, 
-          audio: {
-            deviceId: { exact: audioOutputId }
           }
         })
           .then(function (stream) {
@@ -76,7 +61,7 @@
             cameraView.srcObject = stream;
           })
           .catch(function (error) {
-            console.error("カメラおよびマイクアクセスエラー: " + error);
+            console.error("カメラアクセスエラー: " + error);
           });
       }
       navigator.mediaDevices.getUserMedia({ 
@@ -85,9 +70,6 @@
           width: { ideal: 1920 },
           height: { ideal: 1080 },
           frameRate: { ideal: 60 }
-        }, 
-        audio: {
-          deviceId: { exact: audioOutputId }
         }
       })
         .then(function (stream) {
@@ -95,7 +77,7 @@
           cameraView.srcObject = stream;
         })
         .catch(function (error) {
-          console.error("カメラおよびマイクアクセスエラー: " + error);
+          console.error("カメラアクセスエラー: " + error);
         });
       var toggleButton = document.getElementById("toggleButton");
       toggleButton.addEventListener("click", switchCamera);
