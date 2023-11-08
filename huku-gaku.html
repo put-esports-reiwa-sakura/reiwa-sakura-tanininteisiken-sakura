@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>令和さくら高等学院-単位認定試験時カメラ</title>
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background-color: black;
+      }
+      #cameraView {
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        position: relative;
+      }
+      #toggleButton {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-color: rgba(255, 255, 255, 0);
+        padding: 10px;
+        border: none;
+        cursor: pointer;
+      }
+      #cameraLabel {
+        position: absolute;
+        top: 10px;
+        left: 117px;
+        background-color: rgba(255, 255, 255, 0.8);
+        color: black;
+        font-weight: bold;
+        padding: 5px;
+        transform: scale(1.2);
+      }
+    </style>
+  </head>
+  <body>
+    <video id="cameraView" autoplay playsinline></video>
+    <button id="toggleButton"></button>
+    <div id="cameraLabel">令和さくら高等学院-個別部屋(副学院長ルーム)</div>
+    <script>
+      var currentCamera = 0;
+      var cameras = ["environment", "user", "environment"];
+      function switchCamera() {
+        currentCamera = (currentCamera + 1) % cameras.length;
+        navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: cameras[currentCamera],
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+            frameRate: { ideal: 60 }
+          }
+        })
+          .then(function (stream) {
+            var cameraView = document.getElementById("cameraView");
+            cameraView.srcObject = stream;
+          })
+          .catch(function (error) {
+            console.error("カメラアクセスエラー: " + error);
+          });
+      }
+      navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: cameras[currentCamera],
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+          frameRate: { ideal: 60 }
+        }
+      })
+        .then(function (stream) {
+          var cameraView = document.getElementById("cameraView");
+          cameraView.srcObject = stream;
+        })
+        .catch(function (error) {
+          console.error("カメラアクセスエラー: " + error);
+        });
+      var toggleButton = document.getElementById("toggleButton");
+      toggleButton.addEventListener("click", switchCamera);
+    </script>
+  </body>
+</html>
