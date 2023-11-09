@@ -1,86 +1,45 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>令和さくら高等学院-単位認定試験時カメラ</title>
-    <style>
-      body, html {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        overflow: hidden;
-        background-color: black;
-      }
-      #cameraView {
-        width: 100%;
-        height: 100%;
-        background-color: black;
-        position: relative;
-      }
-      #toggleButton {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        background-color: rgba(255, 255, 255, 0);
-        padding: 10px;
-        border: none;
-        cursor: pointer;
-      }
-      #cameraLabel {
-        position: absolute;
-        top: 10px;
-        left: 117px;
-        background-color: rgba(255, 255, 255, 0.8);
-        color: black;
-        font-weight: bold;
-        padding: 5px;
-        transform: scale(1.2);
-      }
-    </style>
-  </head>
-  <body>
-    <video id="cameraView" autoplay playsinline></video>
-    <button id="toggleButton"></button>
-    <div id="cameraLabel">令和さくら高等学院-小学習室</div>
-    <script>
-      var currentCamera = 0;
-      var cameras = ["environment", "user", "environment"];
-      function switchCamera() {
-        currentCamera = (currentCamera + 1) % cameras.length;
-        navigator.mediaDevices.getUserMedia({ 
-          video: { 
-            facingMode: cameras[currentCamera],
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
-            frameRate: { ideal: 60 }
-          }
-        })
-          .then(function (stream) {
-            var cameraView = document.getElementById("cameraView");
-            cameraView.srcObject = stream;
-          })
-          .catch(function (error) {
-            console.error("カメラアクセスエラー: " + error);
-          });
-      }
-      navigator.mediaDevices.getUserMedia({ 
-        video: { 
-          facingMode: cameras[currentCamera],
-          width: { ideal: 1920 },
-          height: { ideal: 1080 },
-          frameRate: { ideal: 60 }
-        }
-      })
-        .then(function (stream) {
-          var cameraView = document.getElementById("cameraView");
-          cameraView.srcObject = stream;
-        })
-        .catch(function (error) {
-          console.error("カメラアクセスエラー: " + error);
-        });
-      var toggleButton = document.getElementById("toggleButton");
-      toggleButton.addEventListener("click", switchCamera);
-    </script>
-  </body>
+<head>
+    <title>令和さくら高等学院-単位認定試験</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: #f2f2f2;
+		}
+		h1 {
+			background-color: #4285f4;
+			color: white;
+			padding: 20px;
+			margin: 0;
+		}
+		p {
+			padding: 10px;
+		}
+		button {
+			background-color: darkgrey;
+			margin: 10px;
+			padding: 15px 20px;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+			font-size: 24px;
+		}
+	</style>
+</head>
+<body>
+	<h1>令和5年度 令和さくら高等学院 単位認定試験プログラム</h1>
+	<div>
+		<button class="button" onclick="location.href = 'syo-gaku'">小学習室</button>
+		<button class="button" onclick="location.href = 'dai-gaku'">大学習室</button>
+	</div>
+	<div>
+		<h1>個別部屋</h1>
+		<button class="button" onclick="location.href = 'huku-gaku'">副学院長ルーム</button>
+		<button class="button" onclick="location.href = 'sou-dan'">相談室</button>
+	</div>
+</body>
 </html>
