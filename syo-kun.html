@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>令和さくら高等学院-単位認定試験時カメラ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="mainstyle.css">
+  </head>
+  <body>
+    <video id="cameraView" autoplay playsinline></video>
+    <button id="toggleButton"></button>
+    <div id="cameraLabel">令和さくら高等学院-小学習室</div>
+    <script>
+      var currentCamera = 0;
+      var cameras = ["environment", "user", "environment"];
+      function switchCamera() {
+        currentCamera = (currentCamera + 1) % cameras.length;
+        navigator.mediaDevices.getUserMedia({ 
+          video: { 
+            facingMode: cameras[currentCamera],
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+            frameRate: { ideal: 60 }
+          }
+        })
+          .then(function (stream) {
+            var cameraView = document.getElementById("cameraView");
+            cameraView.srcObject = stream;
+          })
+          .catch(function (error) {
+            console.error("カメラアクセスエラー: " + error);
+          });
+      }
+      navigator.mediaDevices.getUserMedia({ 
+        video: { 
+          facingMode: cameras[currentCamera],
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+          frameRate: { ideal: 60 }
+        }
+      })
+        .then(function (stream) {
+          var cameraView = document.getElementById("cameraView");
+          cameraView.srcObject = stream;
+        })
+        .catch(function (error) {
+          console.error("カメラアクセスエラー: " + error);
+        });
+      var toggleButton = document.getElementById("toggleButton");
+      toggleButton.addEventListener("click", switchCamera);
+    </script>
+  </body>
+</html>
