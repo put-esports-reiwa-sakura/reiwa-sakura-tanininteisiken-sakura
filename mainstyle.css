@@ -45,3 +45,9 @@
   transform: translateX(-50%) scale(1.2);
   }
 }
+.right-top {
+	position: absolute;
+	color: white;
+	top: 0;
+	right: 70px;
+}
