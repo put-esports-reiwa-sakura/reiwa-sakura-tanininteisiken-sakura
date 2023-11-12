@@ -47,7 +47,6 @@
 }
 .right-top {
 	position: absolute;
-	font-weight: bold;
 	color: white;
 	top: 0;
 	right: 90px;
@@ -55,4 +54,5 @@
 .right-top p {
 	font-family: "メイリオ","Hiragino Kaku Gothic Pro",Meiryo,"ヒラギノ角ゴ Pro W3","MS PGothic","MS UI Gothic",Helvetica,Arial,sans-serif;
 	font-size: 1.2em;
+	font-weight: bold;
 }
