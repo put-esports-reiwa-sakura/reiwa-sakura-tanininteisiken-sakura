@@ -47,6 +47,7 @@
 }
 .right-top {
 	position: absolute;
+	font-weight: bold;
 	color: white;
 	top: 0;
 	right: 70px;
