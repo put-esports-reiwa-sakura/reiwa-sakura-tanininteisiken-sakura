@@ -3,38 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>カメラ映像表示とライト制御</title>
+  <title>カメラ映像表示とライトON/OFF</title>
 </head>
 <body>
 
 <video id="camera" width="100%" height="auto" autoplay playsinline></video>
-<button id="toggleLight">Toggle Light</button>
+<button id="toggleButton">Toggle Light</button>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   let lightOn = false;
 
   // ユーザーによるインタラクションをトリガーにするため、ボタンを追加
-  const startButton = document.createElement("button");
-  startButton.textContent = "Start Camera";
-  document.body.appendChild(startButton);
-
-  startButton.addEventListener("click", function () {
-    startCamera();
+  const toggleButton = document.getElementById('toggleButton');
+  toggleButton.addEventListener("click", function () {
+    toggleLight();
   });
 
-  // ライト制御のボタン
-  const toggleLightButton = document.getElementById('toggleLight');
-  toggleLightButton.addEventListener('click', toggleLight);
+  async function toggleLight() {
+    try {
+      const device = await navigator.bluetooth.requestDevice({
+        filters: [{ services: ['battery_service'] }]
+      });
+
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService('battery_service');
+      const characteristic = await service.getCharacteristic('battery_level');
+
+      // Write 1 to turn on the light, 0 to turn it off
+      const value = lightOn ? new Uint8Array([0]) : new Uint8Array([1]);
+      await characteristic.writeValue(value);
+
+      lightOn = !lightOn;
+    } catch (error) {
+      console.error('エラーが発生しました: ', error);
+    }
+  }
 
   async function startCamera() {
     try {
-      // USBデバイスへの接続をリクエスト
-      const device = await navigator.usb.requestDevice({ filters: [] });
-
-      // USBデバイスを開く
-      await device.open();
-
       // カメラの映像を取得するためのgetUserMediaメソッドを使用
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
 
@@ -42,30 +49,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const videoElement = document.getElementById('camera');
       videoElement.srcObject = stream;
     } catch (error) {
-      console.error('エラーが発生しました: ', error);
+      console.error('カメラの起動に失敗しました: ', error);
     }
   }
 
-  async function toggleLight() {
-    try {
-      const device = await navigator.usb.requestDevice({ filters: [] });
-      await device.open();
-
-      // USBデバイスにライトの制御コマンドを送信
-      const result = await device.controlTransferOut({
-        requestType: 'vendor',
-        recipient: 'device',
-        request: 0x01, // 任意のコマンド
-        value: lightOn ? 0x0000 : 0x0001, // ライトON/OFFを切り替える値
-        index: 0x0000, // 任意のインデックス
-      });
-
-      // ライトの状態を反転
-      lightOn = !lightOn;
-    } catch (error) {
-      console.error('エラーが発生しました: ', error);
-    }
-  }
+  // カメラも初期表示時に開始
+  startCamera();
 });
 </script>
 
