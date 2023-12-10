@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>カメラ映像表示</title>
+</head>
+<body>
+
+<video id="camera" width="640" height="480" autoplay></video>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // カメラの映像を取得するためのgetUserMediaメソッドを使用
+  navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    .then(function (stream) {
+      // 取得した映像をビデオ要素に設定
+      document.getElementById('camera').srcObject = stream;
+      
+      // ライトをONにする
+      const track = stream.getVideoTracks()[0];
+      const capabilities = track.getCapabilities();
+      
+      if (capabilities.torch) {
+        track.applyConstraints({
+          advanced: [{ torch: true }]
+        });
+      }
+    })
+    .catch(function (error) {
+      console.error('カメラの起動に失敗しました: ', error);
+    });
+});
+</script>
+
+</body>
+</html>
