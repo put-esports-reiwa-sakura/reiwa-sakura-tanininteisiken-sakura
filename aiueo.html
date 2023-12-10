@@ -3,33 +3,49 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>カメラ映像表示</title>
+  <title>カメラ映像表示とライトON</title>
 </head>
 <body>
 
-<video id="camera" width="640" height="480" autoplay></video>
+<video id="camera" width="100%" height="auto" autoplay playsinline></video>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  // カメラの映像を取得するためのgetUserMediaメソッドを使用
-  navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-    .then(function (stream) {
-      // 取得した映像をビデオ要素に設定
-      document.getElementById('camera').srcObject = stream;
-      
-      // ライトをONにする
-      const track = stream.getVideoTracks()[0];
-      const capabilities = track.getCapabilities();
-      
-      if (capabilities.torch) {
-        track.applyConstraints({
-          advanced: [{ torch: true }]
-        });
-      }
-    })
-    .catch(function (error) {
-      console.error('カメラの起動に失敗しました: ', error);
-    });
+  // ユーザーによるインタラクションをトリガーにするため、ボタンを追加
+  const startButton = document.createElement("button");
+  startButton.textContent = "Start Camera";
+  document.body.appendChild(startButton);
+
+  startButton.addEventListener("click", function () {
+    startCamera();
+  });
+
+  function startCamera() {
+    // カメラの映像を取得するためのgetUserMediaメソッドを使用
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+      .then(function (stream) {
+        // 取得した映像をビデオ要素に設定
+        const videoElement = document.getElementById('camera');
+        videoElement.srcObject = stream;
+
+        // ライトをONにする
+        const track = stream.getVideoTracks()[0];
+        const capabilities = track.getCapabilities();
+
+        if (capabilities.torch) {
+          track.applyConstraints({
+            advanced: [{ torch: true }]
+          });
+        }
+      })
+      .catch(function (error) {
+        console.error('カメラの起動に失敗しました: ', error);
+      })
+      .finally(function () {
+        // ボタンを非表示にする（これにより再起動時にボタンが表示されなくなります）
+        startButton.style.display = 'none';
+      });
+  }
 });
 </script>
 
