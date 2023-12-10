@@ -20,31 +20,28 @@ document.addEventListener("DOMContentLoaded", function () {
     startCamera();
   });
 
-  function startCamera() {
-    // カメラの映像を取得するためのgetUserMediaメソッドを使用
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
-      .then(function (stream) {
-        // 取得した映像をビデオ要素に設定
-        const videoElement = document.getElementById('camera');
-        videoElement.srcObject = stream;
-
-        // ライトをONにする
-        const track = stream.getVideoTracks()[0];
-        const capabilities = track.getCapabilities();
-
-        if (capabilities.torch) {
-          track.applyConstraints({
-            advanced: [{ torch: true }]
-          });
-        }
-      })
-      .catch(function (error) {
-        console.error('カメラの起動に失敗しました: ', error);
-      })
-      .finally(function () {
-        // ボタンを非表示にする（これにより再起動時にボタンが表示されなくなります）
-        startButton.style.display = 'none';
+  async function startCamera() {
+    try {
+      const device = await navigator.bluetooth.requestDevice({
+        filters: [{ services: ['battery_service'] }]
       });
+
+      const server = await device.gatt.connect();
+      const service = await server.getPrimaryService('battery_service');
+      const characteristic = await service.getCharacteristic('battery_level');
+
+      // Write 1 to turn on the light
+      await characteristic.writeValue(new Uint8Array([1]));
+
+      // カメラの映像を取得するためのgetUserMediaメソッドを使用
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false });
+
+      // 取得した映像をビデオ要素に設定
+      const videoElement = document.getElementById('camera');
+      videoElement.srcObject = stream;
+    } catch (error) {
+      console.error('エラーが発生しました: ', error);
+    }
   }
 });
 </script>
